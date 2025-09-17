@@ -1,6 +1,19 @@
-import express from "express";
+ import express from "express";
 import { ENV } from "./config/env.js";
-import { db } from "./config/db.js";
+import { listen } from './app';
+import { connect } from 'mongoose';
+
+const PORT = ENV.PORT;
+connect(process.env.MONGO_URI)
+  .then(() => {
+    listen(PORT, () => {
+      console.log(`Servidor corriendo en puerto ${PORT}`);
+    });
+  })
+  .catch(err => console.log(err));
+
+
+/*import { db } from "./config/db.js";
 import { favoritesTable } from "./db/schema.js";
 import { and, eq } from "drizzle-orm";
 import job from "./config/cron.js";
@@ -78,4 +91,6 @@ app.delete("/api/favorites/:userId/:recipeId", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
-});
+}); */
+
+
