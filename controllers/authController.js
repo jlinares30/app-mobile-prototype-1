@@ -27,4 +27,3 @@ export async function login(req, res) {
   res.json({ token });
 }
 
-

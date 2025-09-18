@@ -1,16 +1,33 @@
- import express from "express";
+import express from "express";
+import mongoose from "mongoose";
 import { ENV } from "./config/env.js";
-import { listen } from './app';
-import { connect } from 'mongoose';
 
-const PORT = ENV.PORT;
-connect(process.env.MONGO_URI)
-  .then(() => {
-    listen(PORT, () => {
-      console.log(`Servidor corriendo en puerto ${PORT}`);
+const app = express();
+
+app.use(express.json());
+
+async function start() {
+  try {
+    await mongoose.connect(ENV.DATABASE_URL, {
+      dbName: "miapp",
     });
-  })
-  .catch(err => console.log(err));
+
+    console.log("✅ Conectado a MongoDB");
+
+    app.get("/api/health", (req, res) => {
+      res.json({ ok: true, message: "Mongo conectado" });
+    });
+
+    app.listen(ENV.PORT, () => {
+      console.log(`🚀 Servidor corriendo en http://localhost:${ENV.PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Error conectando a MongoDB:", err.message);
+    process.exit(1);
+  }
+}
+
+start();
 
 
 /*import { db } from "./config/db.js";

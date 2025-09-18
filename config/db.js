@@ -1,7 +1,6 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
-import { ENV } from "./env.js";
-import * as schema from "../db/schema.js";
+import { connect } from 'mongoose';
+const uri = 'TU_URI_DE_MONGODB';
 
-const sql = neon(ENV.DATABASE_URL);
-export const db = drizzle(sql, { schema });
+connect(ENV.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Conexión exitosa a MongoDB'))
+  .catch(err => console.error('Error al conectar a MongoDB:', err));
