@@ -1,6 +1,6 @@
 import User, { findOne } from '../models/User';
 import { hash as _hash, compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export async function register(req, res) {
   const { email, password } = req.body;
@@ -8,22 +8,23 @@ export async function register(req, res) {
     const hash = await _hash(password, 10);
     const user = new User({ email, password: hash });
     await user.save();
-    res.status(201).json({ message: 'Usuario creado' });
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    res.status(400).json({ error: 'Correo ya en uso' });
+    res.status(400).json({ error: 'Email already in use' });
   }
 }
 
-Login
+
 export async function login(req, res) {
   const { email, password } = req.body;
   const user = await findOne({ email });
 
   if (!user || !(await compare(password, user.password))) {
-    return res.status(401).json({ error: 'Credenciales inválidas' });
+    return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = sign({ userId: user._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
   res.json({ token });
 }
 
