@@ -1,3 +1,6 @@
+import Recipe from '../models/Recipe'
+import User from '../models/User'
+
 export async function getFilteredRecipes(req, res) {
   const user = await User.findById(req.userId);
   const userIngredients = user.ingredients;
