@@ -1,5 +1,5 @@
-import Recipe from '../models/Recipe'
-import User from '../models/User'
+import Recipe from '../models/Recipe.js'
+import User from '../models/User.js'
 
 export async function getFilteredRecipes(req, res) {
   const user = await User.findById(req.userId);

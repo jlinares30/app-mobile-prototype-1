@@ -1,6 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import { ENV } from "./config/env.js";
+import authRoutes from './routes/authRoutes.js';
+import ingredientsRoutes from './routes/ingredientsRoutes.js';
+import recipesRoutes from './routes/recipesRoutes.js';
+import mealPlanRoutes from './routes/mealPlanRoutes.js';
+
 
 const app = express();
 
@@ -13,6 +18,12 @@ async function start() {
     });
 
     console.log("✅ Conectado a MongoDB");
+
+    // Rutas
+    app.use("/api/auth", authRoutes);
+    app.use("/api/ingredients", ingredientsRoutes);
+    app.use("/api/recipes", recipesRoutes);
+    app.use("/api/meal-plans", mealPlanRoutes);
 
     app.get("/api/health", (req, res) => {
       res.json({ ok: true, message: "Mongo conectado" });

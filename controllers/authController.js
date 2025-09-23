@@ -1,4 +1,4 @@
-import User, { findOne } from '../models/User';
+import User from '../models/User.js';
 import { hash as _hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -17,7 +17,7 @@ export async function register(req, res) {
 
 export async function login(req, res) {
   const { email, password } = req.body;
-  const user = await findOne({ email });
+  const user = await User.findOne({ email });
 
   if (!user || !(await compare(password, user.password))) {
     return res.status(401).json({ error: 'Invalid credentials' });
