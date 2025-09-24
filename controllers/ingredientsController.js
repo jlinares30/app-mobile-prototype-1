@@ -8,3 +8,14 @@ export const getAllIngredients = async (req, res)=>{
         res.status(500).json({message: 'Error fetching ingredients'})
     }
 }
+
+export const createIngredient = async (req, res)=>{
+    try {
+        const newIngredient = new Ingredient(req.body);
+        const savedIngredient = await newIngredient.save();
+        res.status(201).json(savedIngredient);
+    }
+    catch (error) {
+        res.status(500).json({message: 'Error creating ingredient'})
+    }
+}

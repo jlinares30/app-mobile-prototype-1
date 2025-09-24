@@ -1,9 +1,10 @@
 import {Router} from 'express'
-import { getAllIngredients } from '../controllers/ingredientsController.js'
+import { getAllIngredients, createIngredient } from '../controllers/ingredientsController.js'
 import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-router.get('/ingredients', authMiddleware ,getAllIngredients)
+router.get('/', authMiddleware ,getAllIngredients)
+router.post('/', authMiddleware ,createIngredient)
 
 export default router;
