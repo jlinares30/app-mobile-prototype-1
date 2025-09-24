@@ -22,7 +22,7 @@ export async function login(req, res) {
   if (!user || !(await compare(password, user.password))) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
   res.json({ token });

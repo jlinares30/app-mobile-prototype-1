@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { ENV } from "./config/env.js";
 import authRoutes from './routes/authRoutes.js';
 import ingredientsRoutes from './routes/ingredientsRoutes.js';
-import recipesRoutes from './routes/recipesRoutes.js';
+import recipesRoutes from './routes/recipeRoutes.js';
 import mealPlanRoutes from './routes/mealPlanRoutes.js';
 
 
