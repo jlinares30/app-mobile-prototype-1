@@ -5,11 +5,12 @@ import authRoutes from './routes/authRoutes.js';
 import ingredientsRoutes from './routes/ingredientsRoutes.js';
 import recipesRoutes from './routes/recipeRoutes.js';
 import mealPlanRoutes from './routes/mealPlanRoutes.js';
-
+import cors from 'cors';
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 async function start() {
   try {
@@ -29,9 +30,10 @@ async function start() {
       res.json({ ok: true, message: "Mongo conectado" });
     });
 
-    app.listen(ENV.PORT, () => {
-      console.log(`🚀 Servidor corriendo en http://localhost:${ENV.PORT}`);
-    });
+    app.listen(ENV.PORT, "0.0.0.0", () => {
+  console.log(`🚀 Servidor corriendo en http://0.0.0.0:${ENV.PORT}`);
+});
+
   } catch (err) {
     console.error("❌ Error conectando a MongoDB:", err.message);
     process.exit(1);
