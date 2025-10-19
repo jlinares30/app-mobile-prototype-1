@@ -1,3 +1,4 @@
+import { time } from 'drizzle-orm/mysql-core';
 import { Schema, model } from 'mongoose';
 
 const recipeSchema = new Schema({
@@ -13,6 +14,7 @@ const recipeSchema = new Schema({
   ],
 
   steps: [String],
+  time: { type: String, required: true },
 
   createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 });

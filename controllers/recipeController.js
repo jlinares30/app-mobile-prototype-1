@@ -18,7 +18,7 @@ export async function getFilteredRecipes(req, res) {
 
 export const getRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find().populate('author', 'email');
+    const recipes = await Recipe.find();
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching recipes' });
@@ -32,24 +32,41 @@ export const getMyRecipes = async (req, res) => {
     res.status(500).json({ message: 'Error fetching your recipes' });
   }
 };
+export const getRecipeById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const recipe = await Recipe.findById(id).populate('ingredients.ingredient');
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+    res.status(200).json(recipe);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching recipe' });
+  }
+};
+
 export const createRecipe = async (req, res) => {
-  const { title, ingredients, instructions, cookTime, servings, image } = req.body;
+  const { title, description, ingredients, steps } = req.body;
+  
   try {
     const recipe = new Recipe({
       title,
+      description,
       ingredients,
-      instructions,
-      cookTime,
-      servings,
-      image,
-      author: req.userId
+      steps,
+      createdBy: req.userId
     });
+
     await recipe.save();
+    await recipe.populate('ingredients.ingredient');
+
     res.status(201).json(recipe);
   } catch (error) {
-    res.status(400).json({ message: 'Error creating recipe' });
+    console.error(error);
+    res.status(400).json({ message: 'Error creating recipe', error: error.message });
   }
 };
+
 
 export const updateRecipe = async (req, res) => {
   const { id } = req.params;

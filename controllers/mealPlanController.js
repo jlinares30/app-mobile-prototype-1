@@ -2,7 +2,7 @@ import MealPlan from "../models/MealPlan.js";
 
 export const getMealPlans = async (req, res) => {
     try {
-        const mealPlans = await MealPlan.find({ user: req.user._id }).populate('days.meals.recipes');
+        const mealPlans = await MealPlan.find({ user: req.user._id }).populate('days.meals.recipe', 'title');
         res.status(200).json(mealPlans);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching meal plans', error });
@@ -20,7 +20,7 @@ export const getMealPlanById = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error fetching meal plan', error });
     }
-};
+};  
 
 export const createMealPlan = async (req, res) => {
   try {
@@ -33,6 +33,7 @@ export const createMealPlan = async (req, res) => {
     });
 
     const savedPlan = await newMealPlan.save();
+    await savedPlan.populate('days.meals.recipe.title');
     res.status(201).json(savedPlan);
   } catch (error) {
     res.status(500).json({ message: 'Error creando el meal plan', error });
