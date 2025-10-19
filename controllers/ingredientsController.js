@@ -2,7 +2,13 @@ import Ingredient from '../models/Ingredient.js'
 
 export const getAllIngredients = async (req, res)=>{
     try {
-        const ingredients = await Ingredient.find()
+        const { query } = req.query;
+
+        const filter = query
+      ? { name: { $regex: query, $options: "i" } }
+      : {};
+
+    const ingredients = await Ingredient.find(filter);
         res.status(200).json(ingredients);
     } catch (error) {
         res.status(500).json({message: 'Error fetching ingredients'})

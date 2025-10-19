@@ -18,7 +18,12 @@ export async function getFilteredRecipes(req, res) {
 
 export const getRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find();
+        const { query } = req.query;
+
+        const filter = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const recipes = await Recipe.find(filter);
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching recipes' });
