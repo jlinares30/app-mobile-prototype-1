@@ -10,17 +10,24 @@ export const getMealPlans = async (req, res) => {
 };
 
 export const getMealPlanById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const mealPlan = await MealPlan.findOne({ _id: id, user: req.user._id }).populate('days.meals.recipes');
-        if (!mealPlan) {
-            return res.status(404).json({ message: 'Meal plan not found' });
-        }
-        res.status(200).json(mealPlan);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching meal plan', error });
+  try {
+    const { id } = req.params;
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "No autorizado" });
     }
-};  
+    const mealPlan = await MealPlan.findOne({ _id: id, user: req.user._id })
+      .populate("days.meals.recipe", "_id title imageUrl"); 
+
+    if (!mealPlan) {
+      return res.status(404).json({ message: "Meal plan not found" });
+    }
+    res.status(200).json(mealPlan);
+  } catch (error) {
+    console.error("Error fetching meal plan:", error);
+    res.status(500).json({ message: "Error fetching meal plan", error: error.message });
+  }
+};
+
 
 export const createMealPlan = async (req, res) => {
   try {
