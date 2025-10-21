@@ -3,10 +3,10 @@ import { hash as _hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export async function register(req, res) {
-  const { email, password } = req.body;
+  const {name, email, password } = req.body;
   try {
     const hash = await _hash(password, 10);
-    const user = new User({ email, password: hash });
+    const user = new User({name, email, password: hash });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
