@@ -50,6 +50,38 @@ export const getRecipeById = async (req, res) => {
   }
 };
 
+export const getRecipesByIngredients = async (req, res) => {
+try {
+    const { ingredientIds } = req.body; // lista de IDs de ingredientes seleccionados
+    const recipes = await Recipe.find().populate("ingredients");
+
+    const results = recipes.map((recipe) => {
+      const recipeIngredientIds = recipe.ingredients.map((ing) => ing._id.toString());
+      const matches = recipeIngredientIds.filter((id) =>
+        ingredientIds.includes(id)
+      );
+
+      const matchPercentage =
+        recipeIngredientIds.length > 0
+          ? Math.round((matches.length / recipeIngredientIds.length) * 100)
+          : 0;
+
+      return {
+        ...recipe.toObject(),
+        matchPercentage,
+      };
+    });
+
+    // Ordenar por porcentaje de coincidencia (de mayor a menor)
+    results.sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    res.status(500).json({ message: "Error fetching recipes" });
+  }
+};
+
 export const createRecipe = async (req, res) => {
   const { title, description, ingredients, steps } = req.body;
   
