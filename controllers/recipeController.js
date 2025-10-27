@@ -53,10 +53,11 @@ export const getRecipeById = async (req, res) => {
 export const getRecipesByIngredients = async (req, res) => {
 try {
     const { ingredientIds } = req.body; // lista de IDs de ingredientes seleccionados
+    console.log("Ingredient IDs received:", ingredientIds);
     const recipes = await Recipe.find().populate("ingredients");
-
     const results = recipes.map((recipe) => {
-      const recipeIngredientIds = recipe.ingredients.map((ing) => ing._id.toString());
+      //const recipeIngredientIds = recipe.ingredients.map((ing) => ing._id.toString());
+      const recipeIngredientIds = recipe.ingredients.map((ing) => ing.ingredient.toString());
       const matches = recipeIngredientIds.filter((id) =>
         ingredientIds.includes(id)
       );
