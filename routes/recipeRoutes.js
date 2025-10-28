@@ -3,7 +3,7 @@ import { getRecipes, getRecipeById, createRecipe, updateRecipe, deleteRecipe, ge
 import authMiddleware from '../middlewares/authMiddleware.js';
 const router = Router();
 
-router.get('/', getRecipes);
+router.get('/',authMiddleware, getRecipes);
 router.get('/:id', authMiddleware, getRecipeById);
 router.post('/', authMiddleware, createRecipe);
 router.put('/:id', authMiddleware, updateRecipe);

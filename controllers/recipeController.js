@@ -19,11 +19,25 @@ export async function getFilteredRecipes(req, res) {
 export const getRecipes = async (req, res) => {
   try {
         const { query } = req.query;
+    if (!req.user?._id) {
+          return res.status(401).json({ message: "No autorizado" });
+        }
 
-        const filter = query
+    const ADMIN_ID = process.env.ADMIN_ID;
+
+    // Build search filter
+    const searchFilter = query
       ? { title: { $regex: query, $options: "i" } }
       : {};
-    const recipes = await Recipe.find(filter);
+
+    // Combine with user/admin filter
+    const recipes = await Recipe.find({
+      ...searchFilter,
+      $or: [
+        { user: req.user._id },
+        { user: ADMIN_ID }
+      ]
+    });
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching recipes' });
@@ -52,9 +66,16 @@ export const getRecipeById = async (req, res) => {
 
 export const getRecipesByIngredients = async (req, res) => {
 try {
-    const { ingredientIds } = req.body; // lista de IDs de ingredientes seleccionados
+  // list of selected ingredient IDs
+    const { ingredientIds } = req.body;
+    const ADMIN_ID = process.env.ADMIN_ID;
     console.log("Ingredient IDs received:", ingredientIds);
-    const recipes = await Recipe.find().populate("ingredients");
+    const recipes = await Recipe.find({
+      $or: [
+        { user: req.user._id },
+        { user: ADMIN_ID }
+      ]
+    }).populate("ingredients");
     const results = recipes.map((recipe) => {
       //const recipeIngredientIds = recipe.ingredients.map((ing) => ing._id.toString());
       const recipeIngredientIds = recipe.ingredients.map((ing) => ing.ingredient.toString());

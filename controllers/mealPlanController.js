@@ -2,11 +2,19 @@ import MealPlan from "../models/MealPlan.js";
 
 export const getMealPlans = async (req, res) => {
     try {
-        const mealPlans = await MealPlan.find({ user: req.user._id }).populate('days.meals.recipe', 'title');
-        res.status(200).json(mealPlans);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching meal plans', error });
-    }
+    const ADMIN_ID = process.env.ADMIN_ID;
+
+    const mealPlans = await MealPlan.find({
+      $or: [
+        { user: req.user._id },     
+        { user: ADMIN_ID }          
+      ]
+    }).populate('days.meals.recipe', 'title');
+
+    res.status(200).json(mealPlans);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching meal plans', error });
+  }
 };
 
 export const getMealPlanById = async (req, res) => {
@@ -15,8 +23,15 @@ export const getMealPlanById = async (req, res) => {
     if (!req.user?._id) {
       return res.status(401).json({ message: "No autorizado" });
     }
-    const mealPlan = await MealPlan.findOne({ _id: id, user: req.user._id })
-      .populate("days.meals.recipe", "_id title imageUrl"); 
+    const ADMIN_ID = process.env.ADMIN_ID;
+
+    const mealPlan = await MealPlan.findOne({
+      _id: id,
+      $or: [
+        { user: req.user._id },
+        { user: ADMIN_ID }
+      ]
+    }).populate("days.meals.recipe", "_id title imageUrl");
 
     if (!mealPlan) {
       return res.status(404).json({ message: "Meal plan not found" });
